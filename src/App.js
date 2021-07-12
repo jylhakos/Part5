@@ -18,10 +18,24 @@ const App = () => {
   const [user, setUser] = useState(null)
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs( blogs )
-    )  
+
+    blogService.getAll().then(blogs => setBlogs( blogs ))
+
   }, [])
+
+  useEffect(() => {
+
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogUser')
+
+    if (loggedUserJSON) {
+
+      const user = JSON.parse(loggedUserJSON)
+
+      setUser(user)
+
+      blogService.setToken(user.token)
+    }
+  }, []) 
 
   const handleBlogChange = (event) => {
 
@@ -30,10 +44,36 @@ const App = () => {
     setNewBlog(event.target.value)
   }
 
-  const blogsToShow = showAll
-  ? blogs
-  : blogs.filter(blog => blog.important)
+  const blogsToShow = showAll ? blogs : blogs.filter(blog => blog.important)
 
+  
+  // 5.2
+  const handleLogout = async (event) => {
+
+    console.log('handleLogout')
+
+    try {
+
+      setUser({})
+
+      setUsername('')
+
+      setPassword('')
+
+      // window.localStorage.removeItem('loggedBlogUser')
+
+      window.localStorage.clear()
+
+      window.location.href = '/'
+
+    } catch (exception) {
+
+      console.log('Error', exception)
+
+    }
+  }
+
+  // 5.1
   const handleLogin = async (event) => {
 
     event.preventDefault()
@@ -45,7 +85,9 @@ const App = () => {
       console.log('Login: ', username, password)
 
       blogService.setToken(user.token)
-      
+
+      window.localStorage.setItem('loggedBlogUser', JSON.stringify(user)) 
+
       setUser(user)
 
       setUsername('')
@@ -65,6 +107,7 @@ const App = () => {
   }
 
   const loginForm = () => (
+ 
     <form onSubmit={handleLogin}>
       <div>
         username
@@ -94,11 +137,17 @@ const App = () => {
         user === null ? loginForm() :
         <div>
         <h2>blogs</h2>
-          <p>{user.name} logged in</p>
-          {
-            blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
-          )}
+          <div>
+            <p>
+              {user.name} logged in
+              { 
+
+                localStorage.getItem('loggedBlogUser') !== null ? <button style={{margin:'25px'}} onClick={ event => { if(localStorage.getItem('loggedBlogUser') !== null) handleLogout() } }> logout</button> : null
+
+              }
+            </p>
+          </div>
+          {  blogs.map(blog => <Blog key={blog.id} blog={blog} /> )}
         </div>
        }
     </div>
