@@ -4,6 +4,9 @@
 
 import React, { useState, useEffect } from 'react'
 
+// 5.11
+import PropTypes from 'prop-types'
+
 import './index.css'
 
 import Blog from './components/Blog'
@@ -15,6 +18,10 @@ import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 
 import loginService from './services/login'
+
+Togglable.propTypes = {
+  buttonLabel: PropTypes.string.isRequired
+}
 
 const App = () => {
 
