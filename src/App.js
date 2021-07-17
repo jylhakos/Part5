@@ -6,11 +6,13 @@ import './index.css'
 
 import Blog from './components/Blog'
 
+import BlogForm from './components/BlogForm'
+
+import Togglable from './components/Togglable'
+
 import blogService from './services/blogs'
 
 import loginService from './services/login'
-
-import Togglable from './components/Togglable'
 
 const App = () => {
 
@@ -30,8 +32,8 @@ const App = () => {
   const [newError, setNewError] = useState(null)
 
   // 5.4
-  const ErrorMsg = ({error}) => {
-    if ( error === null) {
+  const ErrorMsg = ({message}) => {
+    if (message === null) {
       return null
     }
 
@@ -40,8 +42,8 @@ const App = () => {
       )
   }
 
-  const InfoMsg = ({success}) => {
-    if ( success === null) {
+  const InfoMsg = ({message}) => {
+    if ( message === null) {
       return null
     }
 
@@ -50,8 +52,38 @@ const App = () => {
       )
   }
 
+  // 5.5
+  //const addBlog = (event) => {
+  // 5.6
+  const addBlog = async (blogObject) => {
+    const response = await blogService.create(blogObject)
+    //  .then(response => {
+
+    console.log('response', response)
+
+    //setBlogs(blogs.concat(response.data))
+
+    const blogs = await blogService.getAll()
+
+    await setBlogs(blogs)
+
+    console.log('blogs', blogs)
+
+    //console.log('blogObject', response.data.title, response.data.author, response.data.url)
+
+    //blogService.getAll().then(blogs => setBlogs(blogs))
+
+    setNewInfo(`The blog ${response.title} is created by ${response.author}`)
+
+    setTimeout(() => {
+     setNewInfo(null)
+    }, 5000)
+
+    //})
+  }
+
   // 5.3
-  const createBlog = async (event) => {
+  /* const createBlog = async (event) => {
 
     event.preventDefault()
 
@@ -86,22 +118,22 @@ const App = () => {
     setTimeout(() => {
       setNewInfo(null)
     }, 5000)
-  }
+  }*/
 
-  const handleTitleChange = (event) => {
-    console.log('handleTitleChange', event.target.value)
-    setNewTitle(event.target.value)
-  }
+  //const handleTitleChange = (event) => {
+  //  console.log('handleTitleChange', event.target.value)
+  //  setNewTitle(event.target.value)
+  //}
 
-  const handleAuthorChange = (event) => {
-    console.log('handleAuthorChange', event.target.value)
-    setNewAuthor(event.target.value)
-  }
+  //const handleAuthorChange = (event) => {
+  //  console.log('handleAuthorChange', event.target.value)
+  //  setNewAuthor(event.target.value)
+  //}
 
-  const handleUrlChange = (event) => {
-    console.log('handleUrlChange', event.target.value)
-    setNewUrl(event.target.value)
-  }
+  //const handleUrlChange = (event) => {
+  //  console.log('handleUrlChange', event.target.value)
+  //  setNewUrl(event.target.value)
+  //}
 
   useEffect(() => {
 
@@ -116,6 +148,8 @@ const App = () => {
     if (loggedUserJSON) {
 
       const user = JSON.parse(loggedUserJSON)
+
+      console.log('loggedUser', user)
 
       setUser(user)
 
@@ -181,6 +215,8 @@ const App = () => {
 
       setUser(user)
 
+      console.log('user', user)
+
       setUsername('')
 
       setPassword('')
@@ -235,6 +271,13 @@ const App = () => {
     </div>
   )
 
+  const blogForm = () => (
+
+    <Togglable buttonLabel='Create New Blogs'>
+      <BlogForm createBlog={addBlog} />
+    </Togglable>
+  )
+
   return (
     <div>
        {
@@ -250,24 +293,12 @@ const App = () => {
                 localStorage.getItem('loggedBlogUser') !== null ? <button style={{margin:'25px'}} onClick={ event => { if(localStorage.getItem('loggedBlogUser') !== null) handleLogout(event) } }> logout</button> : null
 
               }
+              { 
+                blogForm()
+              }
             </p>
           </div>
-            <Togglable buttonLabel='Create New Blogs'>
-              <form onSubmit={createBlog}>
-              <div>
-                <div>
-                  <label>Title: </label><input value={newTitle} onChange={handleTitleChange}/>
-                </div>
-                <div>
-                  <label>Author: </label><input value={newAuthor} onChange={handleAuthorChange}/>
-                </div>
-                <div>
-                  <label>Url: </label><input value={newUrl} onChange={handleUrlChange}/>
-                </div>
-              </div>
-                <div><button type="submit">Create</button></div>
-              </form>
-            </Togglable>
+            
           {  blogs.map(blog => <Blog key={blog.id} blog={blog} /> )}
         </div>
        }
