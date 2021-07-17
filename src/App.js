@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react'
 
+import './index.css';
+
 // 5.2
 //import { useHistory } from 'react-router-dom'
 
@@ -18,16 +20,39 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [newBlog, setNewBlog] = useState('')
   const [showAll, setShowAll] = useState(false)
-  const [ newTitle, setNewTitle ] = useState('')
-  const [ newAuthor, setNewAuthor ] = useState('')
-  const [ newUrl, setNewUrl ] = useState('')
+  const [newTitle, setNewTitle] = useState('')
+  const [newAuthor, setNewAuthor] = useState('')
+  const [newUrl, setNewUrl] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
+  const [newInfo, setNewInfo] = useState(null)
+  const [newError, setNewError] = useState(null)
+
+  // 5.4
+  const ErrorMsg = ({error}) => {
+    if ( error === null) {
+      return null
+    }
+
+    return (
+      <div className="error">{newError}</div>
+      )
+  }
+
+  const InfoMsg = ({success}) => {
+    if ( success === null) {
+      return null
+    }
+
+    return (
+      <div className="successful">{newInfo}</div>
+      )
+  }
 
   // 5.3
-  const createBlog = (event) => {
+  const createBlog = async (event) => {
 
     event.preventDefault()
 
@@ -42,15 +67,26 @@ const App = () => {
 
     console.log('blogObject', blogObject.title, blogObject.author, blogObject.url)
 
-    blogService.create(blogObject)
-    .then(response => {
-      console.log('response', response)
-      setBlogs(blogs.concat(response.data))
-    })
+    const response = await blogService.create(blogObject)
 
+    blogService.getAll().then(blogs => setBlogs( blogs ))
+
+    //blogService.create(blogObject)
+    //.then(response => {
+    //  console.log('response', response)
+    //  data = response
+      //setBlogs(blogs.concat(response.data))
+    //})
+    
     setNewTitle('')
     setNewAuthor('')
     setNewUrl('')
+
+    setNewInfo(`The blog ${blogObject.title} is created by ${blogObject.author}`)
+
+    setTimeout(() => {
+      setNewInfo(null)
+    }, 10000)
   }
 
   const handleTitleChange = (event) => {
@@ -152,18 +188,30 @@ const App = () => {
 
     } catch (exception) {
 
-      setErrorMessage('Error credentials')
+      console.log(exception)
+
+      //setErrorMessage('Error credentials')
+
+      setNewError('A wrong username or password')
+
+      setUsername('')
+
+      setPassword('')
 
       setTimeout(() => {
 
-        setErrorMessage(null)
+        //setErrorMessage(null)
 
-      }, 5000)
+        setNewError(null)
+
+      }, 10000)
     }
   }
 
   const loginForm = () => (
- 
+    <div>
+    <h2>Login</h2>
+    { newError && (ErrorMsg `${newError}`) }
     <form onSubmit={handleLogin}>
       <div>
         username
@@ -185,6 +233,7 @@ const App = () => {
       </div>
       <button type="submit">login</button>
     </form>
+    </div>
   )
 
   return (
@@ -193,6 +242,7 @@ const App = () => {
         user === null ? loginForm() :
         <div>
         <h2>blogs</h2>
+          { newInfo && (InfoMsg `${newInfo}`) }
           <div>
             <p>
               {user.name} logged in
