@@ -1,5 +1,7 @@
 // $ npm install
 
+// npm install prop-types
+
 import React, { useState, useEffect } from 'react'
 
 import './index.css'
@@ -15,8 +17,6 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 
 const App = () => {
-
-  //const history = useHistory()
 
   const [blogs, setBlogs] = useState([])
   const [newBlog, setNewBlog] = useState('')
@@ -65,7 +65,7 @@ const App = () => {
 
     const blogs = await blogService.getAll()
 
-    await setBlogs(blogs)
+    setBlogs(blogs)
 
     console.log('blogs', blogs)
 
@@ -273,7 +273,8 @@ const App = () => {
 
   const blogForm = () => (
 
-    <Togglable buttonLabel='Create New Blogs'>
+    // 5.11
+    <Togglable>
       <BlogForm createBlog={addBlog} />
     </Togglable>
   )
