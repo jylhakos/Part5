@@ -281,7 +281,7 @@ const App = () => {
   const blogForm = () => (
 
     // 5.11
-    <Togglable>
+    <Togglable buttonLabel='Create New Blogs'>
       <BlogForm createBlog={addBlog} />
     </Togglable>
   )
