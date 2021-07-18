@@ -73,16 +73,16 @@ const BlogForm = (props) => {
         <form onSubmit={addBlog}>
           <div>
             <div>
-              <label>Title: </label><input value={newTitle} onChange={handleTitleChange}/>
+              <label>Title: </label><input name="title" value={newTitle} onChange={handleTitleChange}/>
             </div>
             <div>
-              <label>Author: </label><input value={newAuthor} onChange={handleAuthorChange}/>
+              <label>Author: </label><input name="author" value={newAuthor} onChange={handleAuthorChange}/>
             </div>
             <div>
-              <label>Url: </label><input value={newUrl} onChange={handleUrlChange}/>
+              <label>Url: </label><input name="url" value={newUrl} onChange={handleUrlChange}/>
             </div>
           </div>
-            <div><button type="submit">Create</button></div>
+            <div><button name="create" type="submit">Create</button></div>
         </form>
   )}
 

@@ -30,4 +30,22 @@ describe('Blog app', function() {
       cy.contains('Matti Luukkainen logged in').should('not.exist')
     })
   })
+
+  // 5.19
+  describe('When logged in', function() {
+    beforeEach(function() {
+        cy.get('input[name="Username"]').type('mluukkai')
+        cy.get('input[name="Password"]').type('secret')
+        cy.get('button').contains('login').click()
+      })
+
+    it('A blog can be created', function() {
+      cy.contains('Create New Blogs').click()
+      cy.get('input[name="title"]').type('First class tests')
+      cy.get('input[name="author"]').type('Robert C. Martin')
+      cy.get('input[name="url"]').type('http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.html')
+      cy.get('button[name="create"]').click()
+      cy.contains('First class tests')
+    })
+  })
 })

@@ -84,7 +84,7 @@ const App = () => {
 
     setTimeout(() => {
      setNewInfo(null)
-    }, 5000)
+    }, 10000)
 
     //})
   }
